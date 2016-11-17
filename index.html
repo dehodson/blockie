@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+<head>
+	<style>
+		body, html{
+			height:100%;
+			margin:0;
+		}
+		#main{
+			height:500px;
+			width:500px;
+			background-color: #FCC;
+			position: absolute;
+			top:0px;
+			left:0px;
+			right:0px;
+			bottom:0px;
+			margin:auto;
+		}
+		.cell{
+			height:94px;
+			width: 94px;
+			padding:3px;
+			position: absolute;
+			background-color: red;
+			transition: top .1s, left .1s;
+			z-index: 1;
+		}
+		.block{
+			height:94px;
+			width: 94px;
+			padding:3px;
+			position: absolute;
+			background-color: black;
+		}
+		.victory{
+			height:94px;
+			width: 94px;
+			padding:3px;
+			position: absolute;
+			background-color: yellow;
+		}
+	</style>
+</head>
+	<body onkeydown="keyPressed(event);">
+		<div id="main">
+		</div>
+	</body>
+	<script type="text/javascript">
+		var level = [[4,4,1],[3,4,1],[2,4,1],[2,2,2],[2,3,2],[2,0,2],[0,0,3],[1,0,3],[4,1,3]]
+		var grid  = [];
+		var canPress = true;
+		var victory  = [];
+
+		for(var i = 0; i < 5; i++){
+			grid.push(new Array(5).fill(0));
+		}
+
+		function startLevel(level){
+			var main = document.getElementById("main");
+			victory  = [];
+
+			for(var i = 0; i < level.length; i++){
+				if(level[i][2] == 1){
+					var x = level[i][1];
+					var y = level[i][0];
+					var cell = document.createElement("div");
+					grid[y][x] = 1;
+					cell.className  = "cell";
+					cell.id 		= y+"-"+x
+					cell.style.top  = (100 * y) + "px";
+					cell.style.left = (100 * x) + "px";
+					main.appendChild(cell);
+				}else if(level[i][2] == 2){
+					var x = level[i][1];
+					var y = level[i][0];
+					var cell = document.createElement("div");
+					grid[y][x] = 2;
+					cell.className  = "block";
+					cell.id 		= y+"-"+x
+					cell.style.top  = (100 * y) + "px";
+					cell.style.left = (100 * x) + "px";
+					main.appendChild(cell);
+				}else if(level[i][2] == 3){
+					var x = level[i][1];
+					var y = level[i][0];
+					var cell = document.createElement("div");
+					cell.className  = "victory";
+					cell.id 		= y+"-"+x+"-victory";
+					victory.push(y+"-"+x);
+					cell.style.top  = (100 * y) + "px";
+					cell.style.left = (100 * x) + "px";
+					main.appendChild(cell);
+				}
+			}
+		}
+
+		function winLevel(){
+			alert("You win!");
+		}
+
+		function moveBricks(direction){
+			function doVerticalMove(){
+				if(last != i){
+					var element = document.getElementById(i+"-"+j);
+					element.style.top = (100 * last) + "px";
+					element.id = last+"-"+j;
+					grid[last][j] = 1;
+					grid[i][j]    = 0;
+				}
+			}
+			function doHorizontalMove(){
+				if(last != j){
+					var element = document.getElementById(i+"-"+j);
+					element.style.left = (100 * last) + "px";
+					element.id = i+"-"+last;
+					grid[i][last] = 1;
+					grid[i][j]    = 0;
+				}
+			}
+
+			if(direction == 'down'){
+				for(var i = 3; i >= 0; i--){
+					for(var j = 4; j >= 0; j--){
+						if(grid[i][j] == 1){
+							var last = 4;
+							for(var k = i + 1; k <= 4; k++){
+								if(grid[k][j] != 0){
+									last = k - 1;
+									break;
+								}
+							}
+
+							doVerticalMove();
+						}
+					}
+				}
+			}else if(direction == 'up'){
+				for(var i = 1; i <= 4; i++){
+					for(var j = 4; j >= 0; j--){
+						if(grid[i][j] == 1){
+							var last = 0;
+							for(var k = i - 1; k >= 0; k--){
+								if(grid[k][j] != 0){
+									last = k + 1;
+									break;
+								}
+							}
+
+							doVerticalMove();
+						}
+					}
+				}
+			}else if(direction == 'left'){
+				for(var i = 4; i >= 0; i--){
+					for(var j = 1; j <= 4; j++){
+						if(grid[i][j] == 1){
+							var last = 0;
+							for(var k = j - 1; k >= 0; k--){
+								if(grid[i][k] != 0){
+									last = k + 1;
+									break;
+								}
+							}
+
+							doHorizontalMove();
+						}
+					}
+				}
+			}else if(direction == 'right'){
+				for(var i = 4; i >= 0; i--){
+					for(var j = 3; j >= 0; j--){
+						if(grid[i][j] == 1){
+							var last = 4;
+							for(var k = j + 1; k <= 4; k++){
+								if(grid[i][k] != 0){
+									last = k - 1;
+									break;
+								}
+							}
+
+							doHorizontalMove();
+						}
+					}
+				}
+			}
+
+			var victoryNum = 0;
+			var boxes = document.getElementsByClassName("cell");
+			for(var i = 0; i < victory.length; i++){
+				for(var j = 0; j < boxes.length; j++){
+					console.log(victory[i]);
+					if(boxes[j].id == victory[i]){
+						console.log(boxes[j].id + "+" + victory[i]);
+						victoryNum++;
+					}
+				}
+			}
+
+			if(victoryNum == victory.length){
+				setTimeout(winLevel, 100);
+			}
+		}
+
+		function keyPressed(event){
+			if(canPress){
+				if(event.which == 38){        //up
+					moveBricks('up');
+					canPress = false;
+					setTimeout(function(){canPress = true}, 100);
+				}else if(event.which == 37){  //left
+					moveBricks('left');
+					canPress = false;
+					setTimeout(function(){canPress = true}, 100);
+				}else if(event.which == 39){  //right
+					moveBricks('right');
+					canPress = false;
+					setTimeout(function(){canPress = true}, 100);
+				}else if(event.which == 40){  //down
+					moveBricks('down');
+					canPress = false;
+					setTimeout(function(){canPress = true}, 100);
+				}
+			}
+		}
+
+		startLevel(level);
+	</script>
+</html>
