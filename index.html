@@ -43,7 +43,7 @@
 			right:0px;
 			bottom:0px;
 			margin:auto;
-			border-radius: 15px;
+			border-radius: 10px;
 		}
 		.cell{
 			height:88px;
@@ -127,6 +127,7 @@
 			<div id="win-box" onclick="hideWin()"><span class="title">nice job!</span><br />press enter or click here to continue.</div>
 		</div>
 	</body>
+	<script src="hammer.min.js"></script>
 	<script type="text/javascript">
 		var levels   = [
 			[[0,0,1],[1,4,2],[2,2,2],[4,3,3]],
@@ -140,6 +141,7 @@
 		var gridSizeX = 5;
 		var gridSizeY = 5;
 		var cellSize  = 100;
+		var mc = new Hammer(document.body);
 
 		for(var i = 0; i < gridSizeY; i++){
 			grid.push(new Array(gridSizeX).fill(0));
@@ -371,6 +373,14 @@
 				setTimeout(function(){canPress = true}, cellSize);
 			}
 		}
+
+		mc.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
+
+		mc.on("swipeleft swiperight swipeup swipedown", function(ev) {
+			if(gameMode == 2){
+				moveBricks(ev.type.substring(5));
+			}
+		});
 
 		startLevel(levels[currentLevel]);
 	</script>
