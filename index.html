@@ -4,8 +4,10 @@
 	<title>blockie</title>
 	<style>
 		body, html{
-			height:cellSize%;
+			height:100%;
 			margin:0;
+			color: #FFF;
+			background-color: #333;
 		}
 		#game-title{
 			position: absolute;
@@ -25,52 +27,109 @@
 			bottom: -55px;
 			right: 0px;
 		}
+		#help{
+			position: absolute;
+			font-size:50px;
+			bottom: -55px;
+			left: 0px;
+		}
 		#main{
 			height:500px;
 			width:500px;
-			background-color: #FCC;
+			background-color: #DDD;
 			position: absolute;
 			top:0px;
 			left:0px;
 			right:0px;
 			bottom:0px;
 			margin:auto;
-			border-radius: 3px;
+			border-radius: 15px;
 		}
 		.cell{
-			height:98px;
-			width: 98px;
+			height:88px;
+			width: 88px;
 			margin:1px;
 			position: absolute;
-			background-color: red;
+			background-color: rgba(255,0,0,0.5);
 			transition: top .1s, left .1s;
 			z-index: 1;
 			border-radius: 10px;
+			border: 5px solid black;
 		}
 		.block{
 			height:94px;
 			width: 94px;
 			padding:3px;
 			position: absolute;
+			z-index: 0;
 			background-color: black;
 		}
 		.victory{
 			height:100px;
 			width: 100px;
 			position: absolute;
-			background-color: yellow;
+			background-color: #FF4;
+			z-index: 0;
+			box-shadow: 0px 0px 15px #FF4;
+		}
+		#no-click{
+			height:100%;
+			width:100%;
+			z-index: 2;
+			background-color: rgba(0,0,0,0.7);
+			position: absolute;
+			top:0px;
+			left:0px;
+		}
+		#help-box{
+			position: absolute;
+			top:50%;
+			left:50%;
+			transform: translate(-50%, -50%);
+			background-color: #333;
+			z-index: 3;
+			font-size:20px;
+			text-align: center;
+			border: 3px solid white;
+			border-radius: 5px;
+			padding:5px;
+		}
+		#help-box .title{
+			font-size:50px;
+		}
+		#win-box{
+			position: absolute;
+			top:50%;
+			left:50%;
+			transform: translate(-50%, -50%);
+			background-color: #333;
+			z-index: 3;
+			font-size:20px;
+			text-align: center;
+			border: 3px solid white;
+			border-radius: 5px;
+			padding:5px;
+			visibility: hidden;
+		}
+		#win-box .title{
+			font-size:50px;
 		}
 	</style>
 </head>
 	<body onkeydown="keyPressed(event);">
+	<div id="no-click"></div>
 		<div id="main">
 			<div id="game-title">blockie</div>
 			<div id="level">level:&nbsp;<span id="current-level">1</span></div>
 			<div id="restart" onclick="startLevel(levels[currentLevel])">restart</div>
+			<div id="help" onclick="showHelp()">help</div>
+			<div id="help-box" onclick="hideHelp()"><span class="title">blockie</span><br />A game of sliding blocks. Get all the red blocks onto the yellow patches to win.<br /><br />up/down/left/right to move, swipe on mobile.<br /><br />press r or click restart to restart.<br /><br />press enter or click here to continue.</div>
+			<div id="win-box" onclick="hideWin()"><span class="title">nice job!</span><br />press enter or click here to continue.</div>
 		</div>
 	</body>
 	<script type="text/javascript">
 		var levels   = [
+			[[0,0,1],[1,4,2],[2,2,2],[4,3,3]],
 			[[4,4,1],[3,4,1],[4,3,1],[2,2,2],[2,3,2],[2,0,2],[0,0,3],[1,0,3],[4,1,3]]
 		];
 		var grid     = [];
@@ -84,6 +143,30 @@
 
 		for(var i = 0; i < gridSizeY; i++){
 			grid.push(new Array(gridSizeX).fill(0));
+		}
+
+		function showHelp(){
+			document.getElementById("no-click").style.visibility = "visible";
+			document.getElementById("help-box").style.visibility = "visible";
+			gameMode = 1;
+		}
+
+		function hideHelp(){
+			document.getElementById("no-click").style.visibility = "hidden";
+			document.getElementById("help-box").style.visibility = "hidden";
+			gameMode = 2;
+		}
+
+		function showWin(){
+			document.getElementById("no-click").style.visibility = "visible";
+			document.getElementById("win-box").style.visibility = "visible";
+			gameMode = 3;
+		}
+
+		function hideWin(){
+			document.getElementById("no-click").style.visibility = "hidden";
+			document.getElementById("win-box").style.visibility = "hidden";
+			gameMode = 2;
 		}
 
 		function clearType(type){
@@ -145,7 +228,8 @@
 		}
 
 		function winLevel(){
-			alert("You win!");
+			showWin();
+			currentLevel++;
 		}
 
 		function moveBricks(direction){
@@ -253,24 +337,34 @@
 
 		function keyPressed(event){
 			if(canPress){
-				if(event.which == 38){        //up
-					moveBricks('up');
+				if(gameMode == 2){
+					if(event.which == 38){        //up
+						moveBricks('up');
 
-				}else if(event.which == 37){  //left
-					moveBricks('left');
+					}else if(event.which == 37){  //left
+						moveBricks('left');
 
-				}else if(event.which == 39){  //right
-					moveBricks('right');
+					}else if(event.which == 39){  //right
+						moveBricks('right');
 
-				}else if(event.which == 40){  //down
-					moveBricks('down');
+					}else if(event.which == 40){  //down
+						moveBricks('down');
 
-				}else if(event.which == 82){  //R
-					startLevel(levels[currentLevel]);
+					}else if(event.which == 82){  //R
+						startLevel(levels[currentLevel]);
 
-				}else if(event.which == 13){  //enter
-					startLevel(levels[currentLevel]);
-
+					}
+				}
+				if(event.which == 13){  //enter
+					if(gameMode == 0){ // start
+						hideHelp();
+						startLevel(levels[currentLevel]);
+					}else if(gameMode == 1){ // help
+						hideHelp();
+					}else if(gameMode == 3){ // win
+						hideWin();
+						startLevel(levels[currentLevel]);
+					}
 				}
 
 				canPress = false;
