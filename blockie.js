@@ -20,6 +20,7 @@ var levels   = [
 	[[6,6],[0,0,4],[5,0,4],[0,5,4],[5,5,4],[1,3,2],[4,5,2],[4,4,2],[5,5,5],[5,4,5],[3,5,5],[3,4,5]],
 	[[4,4],[0,0,1],[0,1,4],[0,2,6],[2,2,2],[0,1,3],[0,3,5],[3,2,7]]
 ];
+var best = [5,7,7,6,7,5,9,7,10,12,9,9,8,6,12,10,12,9,5,8];
 var grid     = [];
 var canPress = true;
 var victory1 = [];
@@ -32,7 +33,9 @@ var gridSizeY = 7;
 var cellSize  = 16;
 var debug = false;
 var highestLevel = 0;
+var moves = 0;
 var mc = new Hammer(document.body);
+var perfectLevels = []
 
 if(localStorage.level && !debug && currentLevel == 0){
 	currentLevel = Number(localStorage.level);
@@ -40,6 +43,15 @@ if(localStorage.level && !debug && currentLevel == 0){
 
 	for(var i = 0; i <= currentLevel; i++){
 		document.getElementById("level-"+(i + 1)).className = "level unlocked";
+	}
+
+	if(localStorage.perfect){
+		perfectLevels = JSON.parse(localStorage.perfect);
+
+		for(var i = 0; i < perfectLevels.length; i++){
+			console.log(document.getElementById("level-"+(perfectLevels[i] + 1)));
+			document.getElementById("level-"+(perfectLevels[i] + 1)).className = "level unlocked perfect";
+		}
 	}
 }
 
@@ -68,8 +80,13 @@ function showWin(){
 function hideWin(){
 	document.getElementById("no-click").style.visibility = "hidden";
 	document.getElementById("win-box").style.visibility = "hidden";
-	startLevel(levels[currentLevel]);
 	gameMode = 2;
+	if(currentLevel == 20){
+		currentLevel = 19;
+		showLevelSelect();
+	}else{
+		startLevel(levels[currentLevel]);
+	}
 }
 
 function showLevelSelect(){
@@ -105,6 +122,8 @@ function startLevel(level){
 	victory1 = [];
 	victory2 = [];
 	victory3 = [];
+
+	moves = 0;
 
 	gridSizeY = level[0][0];
 	gridSizeX = level[0][1];
@@ -187,9 +206,30 @@ function startLevel(level){
 }
 
 function winLevel(){
+	document.getElementById("moves").innerText = moves;
+
+	if(moves <= best[currentLevel]){
+		document.getElementById("win-box-title").innerText = "perfect!";
+		document.getElementById("level-"+(currentLevel + 1)).className = "level unlocked perfect";
+
+		var found = false;
+		for(var i = 0; i < perfectLevels.length; i++){
+			if(currentLevel == perfectLevels[i]){
+				found = true;
+				break;
+			}
+		}
+		if(!found){
+			perfectLevels.push(currentLevel);
+			localStorage.perfect = JSON.stringify(perfectLevels);
+		}
+	}else{
+		document.getElementById("win-box-title").innerText = "well done!";
+	}
+
 	showWin();
 	currentLevel++;
-	if(currentLevel > highestLevel){
+	if(currentLevel != 20 && currentLevel > highestLevel){
 		highestLevel++;
 		localStorage.level = highestLevel;
 		document.getElementById("level-"+(highestLevel + 1)).className = "level unlocked";
@@ -197,6 +237,8 @@ function winLevel(){
 }
 
 function moveBricks(direction){
+	moves++;
+
 	function doVerticalMove(){
 		if(last != i){
 			var element = document.getElementById(i+"-"+j);

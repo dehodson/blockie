@@ -144,12 +144,13 @@
 		#level-select{
 			z-index: 3;
 			width:80vmin;
-			height:80vmin;
+			height:72.5vmin;
 			position: absolute;
 			left:0px;
 			top:0px;
 			background-color:#DDD;
 			visibility: hidden;
+			padding-top:7.5vmin;
 		}
 		.level{
 			width:15vmin;
@@ -165,10 +166,14 @@
 		.level.unlocked{
 			background-color: #FFF;
 		}
+		.level.unlocked.perfect{
+			background-color: #FFA;
+		}
 		.level.locked{
 			background-color: #222;
 		}
 	</style>
+	<link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/ >
 </head>
 	<body onkeydown="keyPressed(event);">
 	<div id="no-click"></div>
@@ -178,7 +183,7 @@
 			<div id="restart" onclick="startLevel(levels[currentLevel])">restart</div>
 			<div id="help" onclick="showHelp()">help</div>
 			<div id="help-box" onclick="hideHelp()"><span class="title">blockie</span><br /><br />a game of sliding blocks. match the rounded blocks with the glowing squares to win.<br /><br />use the arrow keys or swipe to change gravity.<br /><br />press r or click restart to restart.<br /><br />click the word &quot;level&quot; to select a level.<br /><br />press enter or click this box to continue.</div>
-			<div id="win-box" onclick="hideWin()"><span class="title">well done!</span><br /><br />press enter or click this box to continue.</div>
+			<div id="win-box" onclick="hideWin()"><span class="title" id="win-box-title">well done!</span><br /><br />you completed that level in <span id="moves">0</span> moves.<br /><br />press enter or click this box to continue.</div>
 			<div id="level-select">
 				<div class="level unlocked" id="level-1" onclick="levelSelect(1)">1</div>
 				<div class="level locked"   id="level-2" onclick="levelSelect(2)">2</div>
@@ -203,12 +208,6 @@
 				<div class="level locked"   id="level-18" onclick="levelSelect(18)">18</div>
 				<div class="level locked"   id="level-19" onclick="levelSelect(19)">19</div>
 				<div class="level locked"   id="level-20" onclick="levelSelect(20)">20</div>
-
-				<div class="level locked"   id="level-21" onclick="levelSelect(21)">21</div>
-				<div class="level locked"   id="level-22" onclick="levelSelect(22)">22</div>
-				<div class="level locked"   id="level-23" onclick="levelSelect(23)">23</div>
-				<div class="level locked"   id="level-24" onclick="levelSelect(24)">24</div>
-				<div class="level locked"   id="level-25" onclick="levelSelect(25)">25</div>
 			</div>
 		</div>
 	</body>
