@@ -118,7 +118,7 @@ function clearType(type){
 }
 
 function startLevel(level){
-	var main = document.getElementById("main");
+	var main = document.getElementById("play-grid");
 	victory1 = [];
 	victory2 = [];
 	victory3 = [];

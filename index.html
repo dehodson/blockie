@@ -44,7 +44,16 @@
 			right:0px;
 			bottom:0px;
 			margin:auto;
-			border-radius: 10px;
+			border-radius: 3vmin;
+		}
+		#play-grid{
+			overflow: hidden;
+			height:100%;
+			width:100%;
+			position:absolute;
+			top:0px;
+			left:0px;
+			border-radius: 3vmin;
 		}
 		.cell-1{
 			margin:.25vmin;
@@ -52,7 +61,7 @@
 			background-color: rgba(50,50,255,1);
 			transition: top .1s, left .1s;
 			z-index: 1;
-			border-radius: 15px;
+			border-radius: 3vmin;
 			border: .75vmin solid black;
 		}
 		.cell-2{
@@ -61,7 +70,7 @@
 			background-color: rgba(255,50,50,1);
 			transition: top .1s, left .1s;
 			z-index: 1;
-			border-radius: 15px;
+			border-radius: 3vmin;
 			border: .75vmin solid black;
 		}
 		.cell-3{
@@ -70,7 +79,7 @@
 			background-color: rgba(50,255,50,1);
 			transition: top .1s, left .1s;
 			z-index: 1;
-			border-radius: 15px;
+			border-radius: 3vmin;
 			border: .75vmin solid black;
 		}
 		.block{
@@ -151,6 +160,7 @@
 			background-color:#DDD;
 			visibility: hidden;
 			padding-top:7.5vmin;
+			border-radius: 3vmin;
 		}
 		.level{
 			width:15vmin;
@@ -209,6 +219,7 @@
 				<div class="level locked"   id="level-19" onclick="levelSelect(19)">19</div>
 				<div class="level locked"   id="level-20" onclick="levelSelect(20)">20</div>
 			</div>
+			<div id="play-grid"></div>
 		</div>
 	</body>
 	<script src="hammer.min.js"></script>
